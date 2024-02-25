@@ -2,6 +2,7 @@ health_fitbit
 -
 体組成計[Health Planet](https://www.healthplanet.jp)のデータを[fitbit](https://www.fitbit.com/)に移行させる。
 移行させるデータは３か月前～現在の測定データ。
+１時間当たり１５０件のリクエストで制限がかかります。
 
 使い方
 -
