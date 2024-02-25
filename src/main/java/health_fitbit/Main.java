@@ -1,5 +1,6 @@
 package health_fitbit;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,10 +21,16 @@ public class Main {
 				.filter(logResponse())
 				.build();
 
-		//ヘルスプラネットから指定の日付間のデータを取得(最大3か月)
-		//書式:yyyyMMddHHmmss
-		String from = "";
-		String to = "";
+		CreateData createData = new CreateData(client);
+
+		//ヘルスプラネットから指定の日付間のデータを取得(現在～3か月前)
+		//期間取得
+		DateTimeFormatter time = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime before = now.minusMonths(3);
+		String from = before.format(time);
+		String to = now.format(time);
+		//ヘルスプラネットからデータ取得
 		List<Data> dataList = new HealthPlanet().getHealthData(client, from, to).getDataList();
 		System.out.println(dataList);
 		//体重・体脂肪のデータのリスト
@@ -32,6 +39,7 @@ public class Main {
 		//データの日付を指定の書式に変換するフォーマッター
 		DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss");
 
+		System.out.println("ヘルスプラネット" + dataList);
 		//取得したデータを体重・体脂肪に仕分け
 		dataList.forEach(data -> {
 			if (data.getTag() == 6021) {
@@ -47,13 +55,13 @@ public class Main {
 		});
 		//体重データをfitbitに登録
 		weightList.forEach(weight -> {
-			String resultData = new CreateData().createWeight(client, weight.getKeydata(), weight.getStringdate(),
+			String resultData = createData.createWeight(client, weight.getKeydata(), weight.getStringdate(),
 					weight.getTime());
 			System.out.println(resultData);
 		});
 		//体脂肪データをfitbitに登録
 		fatList.forEach(fat -> {
-			String resultData = new CreateData().createFat(client, fat.getKeydata(), fat.getStringdate(),
+			String resultData = createData.createFat(client, fat.getKeydata(), fat.getStringdate(),
 					fat.getTime());
 			System.out.println(resultData);
 		});

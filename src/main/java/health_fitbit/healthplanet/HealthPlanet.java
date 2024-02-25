@@ -1,5 +1,9 @@
 package health_fitbit.healthplanet;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -15,7 +19,22 @@ import health_fitbit.healthplanet.binddata.HealthData;
 public class HealthPlanet {
 	String baseUri = "https://www.healthplanet.jp";
 	//アクセストークン
-	String access_token = "";
+	String access_token;
+
+	/**
+	 * プロパティファイルからヘルスプラネットのアクセストークンを取得
+	 */
+	public HealthPlanet() {
+		Properties properties = new Properties();
+		try {
+			FileInputStream inputStream = new FileInputStream("token.properties");
+			properties.load(inputStream);
+			this.access_token = properties.getProperty("healthPlanetToken");
+		} catch (IOException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * 指定期間内のデータのリストをバインドしバインドクラスを返す
